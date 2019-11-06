@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+
+source_files = Glob('*.cpp')
+
+Library('mylib', source_files)
+Program('my_prog', source_files)
