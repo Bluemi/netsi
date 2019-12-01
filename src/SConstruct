@@ -1,6 +1,18 @@
 #!/usr/bin/python3
 
+import sys
+
 source_files = Glob('*.cpp')
 
-Library('mylib', source_files)
-Program('my_prog', source_files)
+env = Environment()
+
+env.Append(CCFLAGS='-O3')
+env.Append(LIBS=['pthread'])
+
+env.Library('mylib', source_files)
+# env.Program('my_prog', list(filter(lambda f: not f.get_path().endswith('test.cpp'), source_files)))
+# env.Program('test', list(filter(lambda f: not f.get_path().endswith('main.cpp'), source_files)))
+env.Program('client', 'client.cpp')
+env.Program('server', 'server.cpp')
+env.Program('udp_client', 'udp_client.cpp')
+env.Program('udp_server', 'udp_server.cpp')
