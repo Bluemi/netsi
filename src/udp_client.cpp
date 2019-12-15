@@ -1,6 +1,10 @@
-#include<iostream>
-#include<boost/array.hpp>
-#include<boost/asio.hpp>
+#include <iostream>
+
+#include <boost/thread/thread.hpp>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+
+#include "peer.hpp"
 
 using boost::asio::ip::udp;
 
@@ -11,31 +15,26 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	try {
-		boost::asio::io_context io_context;
+	boost::asio::io_context io_context;
 
-		udp::resolver resolver(io_context);
-		udp::endpoint receiver_endpoint = *resolver.resolve(udp::v4(), "localhost", "1350").begin();
+	udp::resolver resolver(io_context);
+	udp::endpoint init_endpoint = *resolver.resolve(udp::v4(), "BrokKen", "1350").begin();
 
-		udp::socket socket(io_context);
-		socket.open(udp::v4());
+	peer p(io_context, init_endpoint);
+	p.contact_remote();
 
-		// send
-		std::string send_buf = {argv[1]};
-		socket.send_to(boost::asio::buffer(send_buf), receiver_endpoint);
+	// receive
+	p.init_by_response();
 
-		// receive
-		boost::array<char, 256> recv_buf;
-		udp::endpoint sender_endpoint;
-		size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+	std::cout << "local data endpoint: " << p.get_socket().local_endpoint() << std::endl;
+	std::cout << "remote data endpoint: " << p.get_socket().remote_endpoint() << std::endl;
 
-		std::cout << "received: ";
-		std::cout.write(recv_buf.data(), len);
-		std::cout << "\n\tfrom: " << sender_endpoint << std::endl;
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	}
-	catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
+	std::string send_buf = { argv[1] };
+	std::cout << "start send" << std::endl;
+	p.async_send(send_buf);
+	std::cout << "sending " << send_buf << " to " << p.get_socket().remote_endpoint() << std::endl;
+
 	return 0;
 }

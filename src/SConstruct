@@ -5,7 +5,7 @@ import os
 
 source_files = Glob('*.cpp')
 
-env = Environment(parse_flags='-lboost_thread.a')
+env = Environment(parse_flags='-lboost_thread.a -std=c++17')
 env['ENV']['TERM'] = os.environ['TERM']
 
 env.Append(CCFLAGS='-O3')
@@ -14,9 +14,11 @@ env.Append(LIBS=['pthread'])
 env.Library('mylib', source_files)
 # env.Program('my_prog', list(filter(lambda f: not f.get_path().endswith('test.cpp'), source_files)))
 # env.Program('test', list(filter(lambda f: not f.get_path().endswith('main.cpp'), source_files)))
+env.Program('main', ['main.cpp', 'cycle.cpp'])
 env.Program('client', 'client.cpp')
 env.Program('server', 'server.cpp')
 env.Program('udp_client', 'udp_client.cpp')
 env.Program('udp_server', 'udp_server.cpp')
 env.Program('async_udp_server', 'async_udp_server.cpp')
 env.Program('thread_test', 'thread_test.cpp')
+env.Program('network_manager', 'network_manager.cpp')

@@ -35,16 +35,16 @@ class udp_server {
 			if (!error || error == boost::asio::error::message_size) {
 				boost::shared_ptr<std::string> message(new std::string("hey"));
 				_socket.async_send_to(
-					boost::asio::buffer(*message),
-					_remote_endpoint,
-					boost::bind(
-						&udp_server::handle_send,
-						this,
-						message,
-						boost::asio::placeholders::error,
-						boost::asio::placeholders::bytes_transferred
-					)
-				);
+						boost::asio::buffer(*message),
+						_remote_endpoint,
+						boost::bind(
+							&udp_server::handle_send,
+							this,
+							message,
+							boost::asio::placeholders::error,
+							boost::asio::placeholders::bytes_transferred
+							)
+						);
 				start_receive();
 			}
 		}
