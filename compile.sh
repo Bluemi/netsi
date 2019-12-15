@@ -1,3 +1,3 @@
 #!/bin/bash
 
-scons -Q --jobs=4
+scons -Q --jobs=$(nproc)
