@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
 import sys
+import os
 
 source_files = Glob('*.cpp')
 
-env = Environment()
+env = Environment(parse_flags='-lboost_thread.a')
+env['ENV']['TERM'] = os.environ['TERM']
 
 env.Append(CCFLAGS='-O3')
 env.Append(LIBS=['pthread'])
@@ -16,3 +18,5 @@ env.Program('client', 'client.cpp')
 env.Program('server', 'server.cpp')
 env.Program('udp_client', 'udp_client.cpp')
 env.Program('udp_server', 'udp_server.cpp')
+env.Program('async_udp_server', 'async_udp_server.cpp')
+env.Program('thread_test', 'thread_test.cpp')
