@@ -40,14 +40,14 @@ class server_peer_builder {
 		}
 
 	private:
-		void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
+		void handle_receive(const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
 			if (error_code) {
 				std::cout << "error creating connection" << std::endl;
 			} else {
-				std::shared_ptr<peer> p = std::make_shared<peer>(*_io_context, _remote_endpoint);
-				p->connect();
+				std::shared_ptr<peer> p = std::make_shared<peer>(*_io_context);
+				p->connect(_remote_endpoint);
 				p->init();
-				p->contact_remote();
+				p->send_kick_off();
 				_peers.push_back(p);
 			}
 

@@ -20,19 +20,18 @@ int main(int argc, const char** argv)
 	udp::resolver resolver(io_context);
 	udp::endpoint init_endpoint = *resolver.resolve(udp::v4(), "localhost", "1350").begin();
 
-	peer p(io_context, init_endpoint);
-	p.contact_remote();
+	peer p(io_context);
+	p.send_kick_off(init_endpoint);
 
 	// receive
-	p.init_by_response();
+	udp::endpoint remote_endpoint = p.listen_for_kick_off();
+	p.connect(remote_endpoint);
+	p.init();
 
-	std::cout << "local data endpoint: " << p.get_socket().local_endpoint() << std::endl;
-	std::cout << "remote data endpoint: " << p.get_socket().remote_endpoint() << std::endl;
-
-	std::string send_buf = { argv[1] };
-	std::cout << "start send" << std::endl;
+	std::string send_buf(argv[1]);
 	p.async_send(send_buf);
-	std::cout << "sending " << send_buf << " to " << p.get_socket().remote_endpoint() << std::endl;
+
+	io_context.run();
 
 	return 0;
 }
