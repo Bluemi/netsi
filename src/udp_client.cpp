@@ -18,7 +18,7 @@ int main(int argc, const char** argv)
 	boost::asio::io_context io_context;
 
 	udp::resolver resolver(io_context);
-	udp::endpoint init_endpoint = *resolver.resolve(udp::v4(), "BrokKen", "1350").begin();
+	udp::endpoint init_endpoint = *resolver.resolve(udp::v4(), "localhost", "1350").begin();
 
 	peer p(io_context, init_endpoint);
 	p.contact_remote();
@@ -28,8 +28,6 @@ int main(int argc, const char** argv)
 
 	std::cout << "local data endpoint: " << p.get_socket().local_endpoint() << std::endl;
 	std::cout << "remote data endpoint: " << p.get_socket().remote_endpoint() << std::endl;
-
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 	std::string send_buf = { argv[1] };
 	std::cout << "start send" << std::endl;

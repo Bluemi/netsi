@@ -11,7 +11,9 @@ using boost::asio::ip::udp;
 
 class peer {
 	public:
-		peer(boost::asio::io_context& io_context, const udp::endpoint& remote_endpoint) : _socket(io_context), _remote_endpoint(remote_endpoint) {
+		peer(boost::asio::io_context& io_context, const udp::endpoint& remote_endpoint) : _socket(io_context, udp::v4()), _remote_endpoint(remote_endpoint) {}
+
+		void connect() {
 			boost::system::error_code error;
 			_socket.connect(_remote_endpoint, error);
 
@@ -25,20 +27,11 @@ class peer {
 		}
 
 		void init() {
+			std::cout << "init peer" << std::endl;
 			start_receive();
 		}
 
-		void init_by_response() {
-			boost::array<char, 256> recv_buf;
-			udp::endpoint remote_endpoint;
-			_socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
-			_socket.connect(remote_endpoint);
-		}
-
 		void start_receive() {
-			std::cout << "start receive:" << std::endl;
-			std::cout << "\tlocal_endpoint : " << _socket.local_endpoint() << std::endl;
-			std::cout << "\tremote endpoint: " << _socket.remote_endpoint() << std::endl;
 			_socket.async_receive(
 				boost::asio::buffer(_recv_buffer),
 				boost::bind(
@@ -63,9 +56,17 @@ class peer {
 			);
 		}
 
+		void init_by_response() {
+			boost::array<char, 256> recv_buf;
+			_socket.receive_from(boost::asio::buffer(recv_buf), _remote_endpoint);
+			std::cout << "init by response finished" << std::endl;
+			_socket.connect(_remote_endpoint);
+		}
+
 		void contact_remote() {
 			boost::array<char, 0> send_buffer;
-			_socket.send(boost::asio::buffer(send_buffer));
+			_socket.send_to(boost::asio::buffer(send_buffer), _remote_endpoint);
+			std::cout << "sending contact message" << std::endl;
 		}
 
 		const udp::socket& get_socket() const {
@@ -82,8 +83,10 @@ class peer {
 				std::cout << "\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;
 			} else {
 				std::cout << "handle_receive() FAIL:" << std::endl;
-				std::cout << "\terror code   : " << error_code << std::endl;
-				std::cout << "\terror message: " << error_code.message() << std::endl;
+				std::cout << "\terror code     : " << error_code << std::endl;
+				std::cout << "\terror message  : " << error_code.message() << std::endl;
+				std::cout << "\tlocal endpoint : " << _socket.local_endpoint() << std::endl;
+				std::cout << "\tremote endpoint: " << _socket.remote_endpoint() << std::endl;
 			}
 			start_receive();
 		}

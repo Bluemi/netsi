@@ -45,8 +45,9 @@ class server_peer_builder {
 				std::cout << "error creating connection" << std::endl;
 			} else {
 				std::shared_ptr<peer> p = std::make_shared<peer>(*_io_context, _remote_endpoint);
-				p->contact_remote();
+				p->connect();
 				p->init();
+				p->contact_remote();
 				_peers.push_back(p);
 			}
 
