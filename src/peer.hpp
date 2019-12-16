@@ -38,8 +38,7 @@ class peer {
 			);
 		}
 
-		template<typename buffer_type>
-		void async_send(const buffer_type& buffer) {
+		void async_send(const std::string& buffer) {
 			boost::shared_ptr<std::string> message(new std::string(buffer));
 
 			_socket.async_send(
@@ -95,7 +94,7 @@ class peer {
 		void handle_send(const boost::shared_ptr<std::string> message, const boost::system::error_code& error_code, std::size_t bytes_transferred) {
 			if (!error_code) {
 				std::cout << "handle_send():" << std::endl;
-				std::cout << "\tmessage           : " << message << std::endl;
+				std::cout << "\tmessage           : " << *message << std::endl;
 				std::cout << "\tbytes transferred : " << bytes_transferred << std::endl;
 				std::cout << "\tremote endpoint(s): " << _socket.remote_endpoint() << std::endl;
 				std::cout << "\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;

@@ -12,10 +12,6 @@
 template <typename T>
 class blocking_queue
 {
-	private:
-		std::mutex              d_mutex;
-		std::condition_variable d_condition;
-		std::deque<T>           d_queue;
 	public:
 		void push(T const& value) {
 			{
@@ -24,6 +20,7 @@ class blocking_queue
 			}
 			this->d_condition.notify_one();
 		}
+
 		T pop() {
 			std::unique_lock<std::mutex> lock(this->d_mutex);
 			this->d_condition.wait(lock, [=]{ return !this->d_queue.empty(); });
@@ -31,5 +28,13 @@ class blocking_queue
 			this->d_queue.pop_back();
 			return rc;
 		}
+
+		bool empty() const {
+			return d_queue.empty();
+		}
+	private:
+		std::mutex              d_mutex;
+		std::condition_variable d_condition;
+		std::deque<T>           d_queue;
 };
 #endif

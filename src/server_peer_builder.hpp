@@ -39,16 +39,16 @@ class server_peer_builder {
 			return _peers;
 		}
 
+		blocking_queue<udp::endpoint>& get_connecting_endpoints() {
+			return _connecting_endpoints;
+		}
+
 	private:
 		void handle_receive(const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
 			if (error_code) {
 				std::cout << "error creating connection" << std::endl;
 			} else {
-				std::shared_ptr<peer> p = std::make_shared<peer>(*_io_context);
-				p->connect(_remote_endpoint);
-				p->init();
-				p->send_kick_off();
-				_peers.push_back(p);
+				_connecting_endpoints.push(_remote_endpoint);
 			}
 
 			start_receive();
@@ -58,16 +58,8 @@ class server_peer_builder {
 		std::shared_ptr<udp::socket> _socket;
 		udp::endpoint _remote_endpoint;
 		boost::array<char, 256> _recv_buf;
+		blocking_queue<udp::endpoint> _connecting_endpoints;
 		std::vector<std::shared_ptr<peer>> _peers;
 };
-
-int main() {
-	boost::asio::io_context io_context;
-
-	server_peer_builder spb(io_context, 1350);
-	spb.init();
-	io_context.run();
-	return 0;
-}
 
 #endif
