@@ -2,7 +2,7 @@
 #define __NETSI_SERVER_CLASS__
 
 #include "server_network_manager.hpp"
-#include "cycle.hpp"
+#include "util/cycle.hpp"
 
 class game {
 	public:
@@ -16,7 +16,8 @@ class game {
 			for (cycle c(_server_network_manager.get_context(), boost::posix_time::milliseconds(2000));; c.next()) {
 				if (!_server_network_manager.get_connecting_endpoints().empty()) {
 					udp::endpoint remote_endpoint = _server_network_manager.get_connecting_endpoints().pop();
-					_peers.push_back(_server_network_manager.endpoint_to_peer(remote_endpoint));
+					std::shared_ptr<peer> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
+					_peers.push_back(remote_peer);
 					std::cout << "new peer " << remote_endpoint << std::endl;
 				} else {
 					for (std::shared_ptr<peer> p : _peers) {

@@ -77,10 +77,11 @@ class peer {
 		void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
 			if (!error_code) {
 				std::cout << "handle_receive():" << std::endl;
-				std::cout << "\tmessage           : " << _recv_buffer.c_array() << std::endl;
-				std::cout << "\tbytes transferred : " << bytes_transferred << std::endl;
-				std::cout << "\tremote endpoint(s): " << _socket.remote_endpoint() << std::endl;
-				std::cout << "\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;
+				std::cout << "\tmessage           : ";
+				std::cout.write(_recv_buffer.c_array(), bytes_transferred);
+				std::cout << "\n\tbytes transferred : " << bytes_transferred;
+				std::cout << "\n\tremote endpoint(s): " << _socket.remote_endpoint();
+				std::cout << "\n\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;
 			} else {
 				std::cout << "handle_receive() FAIL:" << std::endl;
 				std::cout << "\terror code     : " << error_code << std::endl;

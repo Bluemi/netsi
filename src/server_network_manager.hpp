@@ -2,6 +2,7 @@
 #define __SERVER_NETWORK_MANAGER_CLASS__
 
 #include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 #include "server_peer_builder.hpp"
 

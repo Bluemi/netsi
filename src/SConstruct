@@ -7,14 +7,9 @@ source_files = Glob('*.cpp')
 
 env = Environment(parse_flags='-lboost_thread.a -std=c++17')
 env['ENV']['TERM'] = os.environ['TERM']
-
 # env.Append(CCFLAGS='-O3')
 env.Append(LIBS=['pthread'])
 
-env.Library('mylib', source_files)
-# env.Program('my_prog', list(filter(lambda f: not f.get_path().endswith('test.cpp'), source_files)))
-# env.Program('test', list(filter(lambda f: not f.get_path().endswith('main.cpp'), source_files)))
-env.Program('main', ['main.cpp'])
+# env.Library('mylib', source_files)
 env.Program('udp_client', 'udp_client.cpp')
-# env.Program('network_manager', 'network_manager.cpp')
 env.Program('server', 'server.cpp')

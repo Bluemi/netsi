@@ -5,10 +5,9 @@
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 
 #include "peer.hpp"
-#include "blocking_queue.hpp"
+#include "util/blocking_queue.hpp"
 
 using boost::asio::ip::udp;
 
