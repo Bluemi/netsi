@@ -7,8 +7,7 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
-#include "peer.hpp"
-#include "client_network_manager.hpp"
+#include "client/client_network_manager.hpp"
 
 using boost::asio::ip::udp;
 

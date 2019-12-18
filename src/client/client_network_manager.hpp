@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#include "peer.hpp"
+#include "../peer/peer.hpp"
 
 using boost::asio::ip::udp;
 

@@ -4,6 +4,7 @@ import sys
 import os
 
 source_files = Glob('*.cpp')
+# source_files.extend(Glob('*.hpp'))
 
 env = Environment(parse_flags='-lboost_thread.a -std=c++17')
 env['ENV']['TERM'] = os.environ['TERM']
@@ -11,5 +12,5 @@ env['ENV']['TERM'] = os.environ['TERM']
 env.Append(LIBS=['pthread'])
 
 # env.Library('mylib', source_files)
-env.Program('client', 'client.cpp')
-env.Program('server', 'server.cpp')
+env.Program('example_client', 'client.cpp')
+env.Program('example_server', 'server.cpp')

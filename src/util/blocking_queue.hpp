@@ -5,7 +5,6 @@
 #include <condition_variable>
 #include <deque>
 
-
 /**
  * Taken from https://stackoverflow.com/questions/12805041/c-equivalent-to-javas-blockingqueue
  */

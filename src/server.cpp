@@ -1,7 +1,7 @@
 #ifndef __NETSI_SERVER_CLASS__
 #define __NETSI_SERVER_CLASS__
 
-#include "server_network_manager.hpp"
+#include "server/server_network_manager.hpp"
 #include "util/cycle.hpp"
 
 class game {
@@ -20,8 +20,10 @@ class game {
 					_peers.push_back(remote_peer);
 					std::cout << "new peer " << remote_endpoint << std::endl;
 				} else {
+					unsigned int client_id = 0;
 					for (std::shared_ptr<peer> p : _peers) {
-						p->async_send(std::string("hello"));
+						p->async_send(std::string("hello  client ") + std::to_string(client_id));
+						client_id++;
 					}
 				}
 			}
