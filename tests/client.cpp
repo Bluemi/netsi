@@ -1,5 +1,5 @@
-#ifndef __NETSI_UDP_CLIENT_CLASS__
-#define __NETSI_UDP_CLIENT_CLASS__
+#ifndef __UDP_CLIENT_CLASS__
+#define __UDP_CLIENT_CLASS__
 
 #include <iostream>
 
@@ -7,8 +7,8 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
-#include "client/client_network_manager.hpp"
-#include "util/cycle.hpp"
+#include <netsi/client/client_network_manager.hpp>
+#include <netsi/util/cycle.hpp>
 
 using boost::asio::ip::udp;
 

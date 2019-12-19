@@ -1,8 +1,8 @@
 #ifndef __NETSI_SERVER_CLASS__
 #define __NETSI_SERVER_CLASS__
 
-#include "server/server_network_manager.hpp"
-#include "util/cycle.hpp"
+#include <netsi/server/server_network_manager.hpp>
+#include <netsi/util/cycle.hpp>
 
 class game {
 	public:

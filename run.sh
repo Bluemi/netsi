@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "s" ]; then
-	./build/example_server
+	./build/tests/example_server
 else
-	./build/example_client
+	./build/tests/example_client
 fi
