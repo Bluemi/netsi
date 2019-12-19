@@ -1,5 +1,5 @@
-#ifndef __CYCLE_CLASS__
-#define __CYCLE_CLASS__
+#ifndef __NETSI_CYCLE_CLASS__
+#define __NETSI_CYCLE_CLASS__
 
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

@@ -1,5 +1,5 @@
-#ifndef __BLOCKING_QUEUE_CLASS__
-#define __BLOCKING_QUEUE_CLASS__
+#ifndef __NETSI_BLOCKING_QUEUE_CLASS__
+#define __NETSI_BLOCKING_QUEUE_CLASS__
 
 #include <mutex>
 #include <condition_variable>

@@ -1,5 +1,5 @@
-#ifndef __SERVER_NETWORK_MANAGER_CLASS__
-#define __SERVER_NETWORK_MANAGER_CLASS__
+#ifndef __NETSI_SERVER_NETWORK_MANAGER_CLASS__
+#define __NETSI_SERVER_NETWORK_MANAGER_CLASS__
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
