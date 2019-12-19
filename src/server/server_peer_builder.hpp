@@ -19,7 +19,6 @@ namespace netsi {
 				: _io_context(&io_context), _socket(std::make_shared<udp::socket>(io_context, endpoint(udp::v4(), port))) {}
 
 			void init() {
-				std::cout << "listening on " << _socket->local_endpoint() << std::endl;
 				start_receive();
 			}
 
@@ -47,7 +46,7 @@ namespace netsi {
 		private:
 			void handle_receive(const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
 				if (error_code) {
-					std::cout << "error creating connection" << std::endl;
+					std::cerr << "error creating connection" << std::endl;
 				} else {
 					_connecting_endpoints.push(_remote_endpoint);
 				}

@@ -92,19 +92,19 @@ namespace netsi {
 						)
 					);
 				} else {
-					std::cout << "handle_receive() FAIL:" << std::endl;
-					std::cout << "\terror code     : " << error_code << std::endl;
-					std::cout << "\terror message  : " << error_code.message() << std::endl;
-					std::cout << "\tlocal endpoint : " << _socket.local_endpoint() << std::endl;
-					std::cout << "\tremote endpoint: " << _socket.remote_endpoint() << std::endl;
+					std::cerr << "handle_receive() FAIL:" << std::endl;
+					std::cerr << "\terror code     : " << error_code << std::endl;
+					std::cerr << "\terror message  : " << error_code.message() << std::endl;
+					std::cerr << "\tlocal endpoint : " << _socket.local_endpoint() << std::endl;
+					std::cerr << "\tremote endpoint: " << _socket.remote_endpoint() << std::endl;
 				}
 				start_receive();
 			}
 
 			void handle_send(const std::shared_ptr<std::vector<char>> /*message*/, const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
 				if (error_code) {
-					std::cout << "handle send(): FAIL" << std::endl;
-					std::cout << "\terror code: " << error_code << std::endl;
+					std::cerr << "handle send(): FAIL" << std::endl;
+					std::cerr << "\terror code: " << error_code << std::endl;
 				}
 			}
 
