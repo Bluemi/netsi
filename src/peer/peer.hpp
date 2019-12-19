@@ -7,7 +7,11 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include "../util/blocking_queue.hpp"
+
 using boost::asio::ip::udp;
+
+constexpr std::size_t BUFFER_SIZE = 256;
 
 class peer {
 	public:
@@ -38,8 +42,8 @@ class peer {
 			);
 		}
 
-		void async_send(const std::string& buffer) {
-			boost::shared_ptr<std::string> message(new std::string(buffer));
+		void async_send(const std::vector<char>& buffer) {
+			std::shared_ptr<std::vector<char>> message(new std::vector<char>(buffer));
 
 			_socket.async_send(
 				boost::asio::buffer(*message),
@@ -54,7 +58,7 @@ class peer {
 		}
 
 		udp::endpoint listen_for_kick_off() {
-			boost::array<char, 256> recv_buf;
+			boost::array<char, BUFFER_SIZE> recv_buf;
 			udp::endpoint remote_endpoint;
 			_socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 			return remote_endpoint;
@@ -73,15 +77,19 @@ class peer {
 		const udp::socket& get_socket() const {
 			return _socket;
 		}
+
+		blocking_queue<std::vector<char>>& messages() {
+			return _message_queue;
+		}
 	private:
 		void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
 			if (!error_code) {
-				std::cout << "handle_receive():" << std::endl;
-				std::cout << "\tmessage           : ";
-				std::cout.write(_recv_buffer.c_array(), bytes_transferred);
-				std::cout << "\n\tbytes transferred : " << bytes_transferred;
-				std::cout << "\n\tremote endpoint(s): " << _socket.remote_endpoint();
-				std::cout << "\n\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;
+				_message_queue.push(
+					std::vector<char>(
+						_recv_buffer.cbegin(),
+						_recv_buffer.cbegin()+bytes_transferred
+					)
+				);
 			} else {
 				std::cout << "handle_receive() FAIL:" << std::endl;
 				std::cout << "\terror code     : " << error_code << std::endl;
@@ -92,21 +100,16 @@ class peer {
 			start_receive();
 		}
 
-		void handle_send(const boost::shared_ptr<std::string> message, const boost::system::error_code& error_code, std::size_t bytes_transferred) {
-			if (!error_code) {
-				std::cout << "handle_send():" << std::endl;
-				std::cout << "\tmessage           : " << *message << std::endl;
-				std::cout << "\tbytes transferred : " << bytes_transferred << std::endl;
-				std::cout << "\tremote endpoint(s): " << _socket.remote_endpoint() << std::endl;
-				std::cout << "\tlocal  endpoint   : " << _socket.local_endpoint() << std::endl;
-			} else {
+		void handle_send(const std::shared_ptr<std::vector<char>> /*message*/, const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
+			if (error_code) {
 				std::cout << "handle send(): FAIL" << std::endl;
 				std::cout << "\terror code: " << error_code << std::endl;
 			}
 		}
 
 		udp::socket _socket;
-		boost::array<char, 256> _recv_buffer;
+		boost::array<char, BUFFER_SIZE> _recv_buffer;
+		blocking_queue<std::vector<char>> _message_queue;
 };
 
 #endif

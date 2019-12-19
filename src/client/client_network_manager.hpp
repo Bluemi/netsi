@@ -50,6 +50,10 @@ class client_network_manager {
 				_run_thread = {};
 			}
 		}
+
+		boost::asio::io_context& get_context() {
+			return _io_context;
+		}
 	private:
 		boost::asio::io_context _io_context;
 		std::optional<boost::thread> _run_thread;
