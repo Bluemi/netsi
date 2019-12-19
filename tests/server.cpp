@@ -13,7 +13,7 @@ class game {
 		void run() {
 			std::cout << "game is running" << std::endl;
 
-			for (cycle c(_server_network_manager.get_context(), boost::posix_time::milliseconds(40));; c.next()) {
+			for (netsi::cycle c(_server_network_manager.get_context(), boost::posix_time::milliseconds(40));; c.next()) {
 				check_new_peers();
 				handle_to_clients();
 			}
@@ -24,8 +24,8 @@ class game {
 	private:
 		void check_new_peers() {
 			if (!_server_network_manager.get_connecting_endpoints().empty()) {
-				udp::endpoint remote_endpoint = _server_network_manager.get_connecting_endpoints().pop();
-				std::shared_ptr<peer> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
+				netsi::endpoint remote_endpoint = _server_network_manager.get_connecting_endpoints().pop();
+				std::shared_ptr<netsi::peer> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
 				_peers.push_back(remote_peer);
 				std::cout << "new peer " << remote_endpoint << std::endl;
 			}
@@ -33,13 +33,13 @@ class game {
 
 		void handle_to_clients() {
 			unsigned char client_id = 0;
-			for (const std::shared_ptr<peer>& p : _peers) {
+			for (const std::shared_ptr<netsi::peer>& p : _peers) {
 				if (!p->messages().empty()) {
 					std::vector<char> m = p->messages().pop();
 					m.push_back(' ');
 					m.push_back('0' + client_id);
 
-					for (std::shared_ptr<peer>& prs : _peers) {
+					for (std::shared_ptr<netsi::peer>& prs : _peers) {
 						prs->async_send(m);
 					}
 				}
@@ -48,8 +48,8 @@ class game {
 			}
 		}
 
-		server_network_manager _server_network_manager;
-		std::vector<std::shared_ptr<peer>> _peers;
+		netsi::server_network_manager _server_network_manager;
+		std::vector<std::shared_ptr<netsi::peer>> _peers;
 
 };
 

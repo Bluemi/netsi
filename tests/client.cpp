@@ -17,14 +17,14 @@ class game {
 		game() : _client_network_manager(), _peer(), _counter(0) {}
 
 		void init() {
-			udp::endpoint init_endpoint = _client_network_manager.resolve("localhost", "1350");
+			netsi::endpoint init_endpoint = _client_network_manager.resolve("localhost", "1350");
 			_peer = _client_network_manager.create_peer(init_endpoint);
 
 			_client_network_manager.run();
 		}
 
 		void run() {
-			for (cycle c(_client_network_manager.get_context(), boost::posix_time::milliseconds(40));; c.next()) {
+			for (netsi::cycle c(_client_network_manager.get_context(), boost::posix_time::milliseconds(40));; c.next()) {
 				send_message();
 				handle_response();
 			}
@@ -51,8 +51,8 @@ class game {
 			_client_network_manager.join();
 		}
 	private:
-		client_network_manager _client_network_manager;
-		std::shared_ptr<peer> _peer;
+		netsi::client_network_manager _client_network_manager;
+		std::shared_ptr<netsi::peer> _peer;
 		unsigned int _counter;
 };
 
