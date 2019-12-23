@@ -16,7 +16,7 @@ namespace netsi {
 
 	class peer {
 		public:
-			peer(boost::asio::io_context& io_context) : _socket(io_context, udp::v4()) {}
+			peer(boost::asio::io_context& io_context) : _socket(io_context, udp::v4()), _disconnected(false) {}
 
 			/**
 			 * Connects the underlying socket with the given remote endpoint
@@ -43,7 +43,14 @@ namespace netsi {
 				);
 			}
 
+			void send(const std::vector<char>& buffer) {
+				_socket.send(boost::asio::buffer(buffer));
+			}
+
 			void async_send(const std::vector<char>& buffer) {
+				if (_disconnected) {
+					return;
+				}
 				std::shared_ptr<std::vector<char>> message(new std::vector<char>(buffer));
 
 				_socket.async_send(
@@ -82,8 +89,15 @@ namespace netsi {
 			blocking_queue<std::vector<char>>& messages() {
 				return _message_queue;
 			}
+
+			void disconnect() {
+				_disconnected = true;
+			}
 		private:
 			void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
+				if (_disconnected) {
+					return;
+				}
 				if (!error_code) {
 					_message_queue.push(
 						std::vector<char>(
@@ -102,6 +116,9 @@ namespace netsi {
 			}
 
 			void handle_send(const std::shared_ptr<std::vector<char>> /*message*/, const boost::system::error_code& error_code, std::size_t /*bytes_transferred*/) {
+				if (_disconnected) {
+					return;
+				}
 				if (error_code) {
 					std::cerr << "handle send(): FAIL" << std::endl;
 					std::cerr << "\terror code: " << error_code << std::endl;
@@ -111,6 +128,7 @@ namespace netsi {
 			udp::socket _socket;
 			boost::array<char, BUFFER_SIZE> _recv_buffer;
 			blocking_queue<std::vector<char>> _message_queue;
+			std::atomic<bool> _disconnected;
 	};
 }
 
