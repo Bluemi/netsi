@@ -12,6 +12,8 @@
 
 using boost::asio::ip::udp;
 
+constexpr std::size_t BUFFER_SIZE = 256;
+
 class game {
 	public:
 		game() : _client_network_manager(), _peer(), _counter(0) {}
@@ -51,8 +53,8 @@ class game {
 			_client_network_manager.join();
 		}
 	private:
-		netsi::client_network_manager _client_network_manager;
-		std::shared_ptr<netsi::peer> _peer;
+		netsi::client_network_manager<BUFFER_SIZE> _client_network_manager;
+		std::shared_ptr<netsi::peer<BUFFER_SIZE>> _peer;
 		unsigned int _counter;
 };
 

@@ -12,6 +12,7 @@ namespace netsi {
 	 * Wraps a server peer builder and starts it in a new thread.
 	 * Runs and handles the io_context.
 	 */
+	template<std::size_t BUFFER_SIZE>
 	class server_network_manager
 	{
 		public:
@@ -30,7 +31,7 @@ namespace netsi {
 			}
 
 			void run(unsigned short port) {
-				_server_peer_builder = std::make_unique<server_peer_builder>(_io_context, port);
+				_server_peer_builder = std::make_unique<server_peer_builder<BUFFER_SIZE>>(_io_context, port);
 				_run_thread = boost::thread(std::ref(*this));
 			}
 
@@ -51,8 +52,8 @@ namespace netsi {
 				_io_context.run();
 			}
 
-			std::shared_ptr<peer> endpoint_to_peer(const endpoint& remote_endpoint) {
-				std::shared_ptr<peer> new_peer = std::shared_ptr<peer>(new peer(_io_context));
+			std::shared_ptr<peer<BUFFER_SIZE>> endpoint_to_peer(const endpoint& remote_endpoint) {
+				std::shared_ptr<peer<BUFFER_SIZE>> new_peer = std::shared_ptr<peer<BUFFER_SIZE>>(new peer<BUFFER_SIZE>(_io_context));
 				new_peer->connect(remote_endpoint);
 				new_peer->init();
 				new_peer->send_kick_off();
@@ -61,7 +62,7 @@ namespace netsi {
 		private:
 			boost::asio::io_context _io_context;
 			std::optional<boost::thread> _run_thread;
-			std::unique_ptr<server_peer_builder> _server_peer_builder;
+			std::unique_ptr<server_peer_builder<BUFFER_SIZE>> _server_peer_builder;
 	};
 }
 

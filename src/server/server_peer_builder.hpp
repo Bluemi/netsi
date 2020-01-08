@@ -13,6 +13,7 @@
 namespace netsi {
 	using boost::asio::ip::udp;
 
+	template<std::size_t BUFFER_SIZE>
 	class server_peer_builder {
 		public:
 			server_peer_builder(boost::asio::io_context& io_context, unsigned short port)
@@ -35,7 +36,7 @@ namespace netsi {
 				);
 			}
 
-			const std::vector<std::shared_ptr<peer>>& get_peers() const {
+			const std::vector<std::shared_ptr<peer<BUFFER_SIZE>>>& get_peers() const {
 				return _peers;
 			}
 
@@ -59,7 +60,7 @@ namespace netsi {
 			endpoint _remote_endpoint;
 			boost::array<char, 256> _recv_buf;
 			blocking_queue<endpoint> _connecting_endpoints;
-			std::vector<std::shared_ptr<peer>> _peers;
+			std::vector<std::shared_ptr<peer<BUFFER_SIZE>>> _peers;
 	};
 }
 

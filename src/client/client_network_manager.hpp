@@ -10,6 +10,7 @@
 namespace netsi {
 	using boost::asio::ip::udp;
 
+	template<std::size_t BUFFER_SIZE>
 	class client_network_manager {
 		public:
 			client_network_manager() : _io_context(), _run_thread() {}
@@ -22,8 +23,8 @@ namespace netsi {
 				return *resolver.resolve(udp::v4(), remote_host, port).begin();
 			}
 
-			std::shared_ptr<peer> create_peer(const endpoint& init_endpoint) {
-				std::shared_ptr<peer> p = std::make_shared<peer>(_io_context);
+			std::shared_ptr<peer<BUFFER_SIZE>> create_peer(const endpoint& init_endpoint) {
+				std::shared_ptr<peer<BUFFER_SIZE>> p = std::make_shared<peer<BUFFER_SIZE>>(_io_context);
 				p->send_kick_off(init_endpoint);
 
 				endpoint data_endpoint = p->listen_for_kick_off();

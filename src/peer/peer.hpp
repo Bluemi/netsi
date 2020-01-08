@@ -12,8 +12,9 @@
 namespace netsi {
 	using boost::asio::ip::udp;
 
-	constexpr std::size_t BUFFER_SIZE = 256;
+	constexpr std::size_t DEFAULT_BUFFER_SIZE = 256;
 
+	template<std::size_t BUFFER_SIZE=DEFAULT_BUFFER_SIZE>
 	class peer {
 		public:
 			peer(boost::asio::io_context& io_context) : _socket(io_context, udp::v4()), _disconnected(false) {}

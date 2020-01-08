@@ -4,6 +4,8 @@
 #include <netsi/server/server_network_manager.hpp>
 #include <netsi/util/cycle.hpp>
 
+constexpr std::size_t BUFFER_SIZE = 256;
+
 class game {
 	public:
 		void init() {
@@ -25,7 +27,7 @@ class game {
 		void check_new_peers() {
 			if (!_server_network_manager.get_connecting_endpoints().empty()) {
 				netsi::endpoint remote_endpoint = _server_network_manager.get_connecting_endpoints().pop();
-				std::shared_ptr<netsi::peer> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
+				std::shared_ptr<netsi::peer<BUFFER_SIZE>> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
 				_peers.push_back(remote_peer);
 				std::cout << "new peer " << remote_endpoint << std::endl;
 			}
@@ -33,13 +35,13 @@ class game {
 
 		void handle_to_clients() {
 			unsigned char client_id = 0;
-			for (const std::shared_ptr<netsi::peer>& p : _peers) {
+			for (const std::shared_ptr<netsi::peer<BUFFER_SIZE>>& p : _peers) {
 				if (!p->messages().empty()) {
 					std::vector<char> m = p->messages().pop();
 					m.push_back(' ');
 					m.push_back('0' + client_id);
 
-					for (std::shared_ptr<netsi::peer>& prs : _peers) {
+					for (std::shared_ptr<netsi::peer<BUFFER_SIZE>>& prs : _peers) {
 						prs->async_send(m);
 					}
 				}
@@ -48,8 +50,8 @@ class game {
 			}
 		}
 
-		netsi::server_network_manager _server_network_manager;
-		std::vector<std::shared_ptr<netsi::peer>> _peers;
+		netsi::server_network_manager<BUFFER_SIZE> _server_network_manager;
+		std::vector<std::shared_ptr<netsi::peer<BUFFER_SIZE>>> _peers;
 
 };
 
