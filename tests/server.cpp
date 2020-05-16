@@ -1,64 +1,40 @@
 #ifndef __NETSI_SERVER_CLASS__
 #define __NETSI_SERVER_CLASS__
 
-#include <netsi/server/server_network_manager.hpp>
-#include <netsi/util/cycle.hpp>
+#include <netsi/server.hpp>
 
-constexpr std::size_t BUFFER_SIZE = 256;
-
-class game {
-	public:
-		void init() {
-			_server_network_manager.run(1350);
-		}
-
-		void run() {
-			std::cout << "game is running" << std::endl;
-
-			for (netsi::cycle c(_server_network_manager.get_context(), boost::posix_time::milliseconds(40));; c.next()) {
-				check_new_peers();
-				handle_to_clients();
-			}
-
-			_server_network_manager.join();
-			std::cout << "game terminated" << std::endl;
-		}
-	private:
-		void check_new_peers() {
-			if (!_server_network_manager.get_connecting_endpoints().empty()) {
-				netsi::endpoint remote_endpoint = _server_network_manager.get_connecting_endpoints().pop();
-				std::shared_ptr<netsi::peer<BUFFER_SIZE>> remote_peer = _server_network_manager.endpoint_to_peer(remote_endpoint);
-				_peers.push_back(remote_peer);
-				std::cout << "new peer " << remote_endpoint << std::endl;
-			}
-		}
-
-		void handle_to_clients() {
-			unsigned char client_id = 0;
-			for (const std::shared_ptr<netsi::peer<BUFFER_SIZE>>& p : _peers) {
-				if (!p->messages().empty()) {
-					std::vector<char> m = p->messages().pop();
-					m.push_back(' ');
-					m.push_back('0' + client_id);
-
-					for (std::shared_ptr<netsi::peer<BUFFER_SIZE>>& prs : _peers) {
-						prs->async_send(m);
-					}
-				}
-
-				client_id++;
-			}
-		}
-
-		netsi::server_network_manager<BUFFER_SIZE> _server_network_manager;
-		std::vector<std::shared_ptr<netsi::peer<BUFFER_SIZE>>> _peers;
-
-};
+constexpr std::size_t BUFFER_SIZE = 2048;
+constexpr std::uint16_t PORT = 1035;
 
 int main() {
-	game game;
-	game.init();
-	game.run();
+	netsi::server_network_manager snm(PORT, BUFFER_SIZE);
+	std::vector<netsi::peer> peers;
+
+	bool running = true;
+
+	while (running) {
+		// handle new connections
+		while (snm.has_new_client()) {
+			netsi::endpoint new_client_endpoint = snm.pop_new_client();
+			netsi::peer new_peer = snm.endpoint_to_peer(new_client_endpoint);
+			peers.push_back(new_peer);
+		}
+
+		// handle new messages
+		for (netsi::peer& peer : peers) {
+			while (peer.has_message()) {
+				const std::vector<char>& buffer = peer.pop_message();
+				std::string s(buffer.cbegin(), buffer.cend());
+
+				if (s == "quit") {
+					running = false;
+				} else {
+					s = "you sent \"" + s + "\"";
+				}
+				peer.send(s);
+			}
+		}
+	}
 	return 0;
 }
 
