@@ -3,7 +3,7 @@
 import sys
 import os
 
-env = Environment(parse_flags='-lboost_thread.a -std=c++17 -I..')
+env = Environment(parse_flags='-lboost_thread -lboost_system -std=c++17 -I/usr/local/include/boost -L/usr/local/lib -I..')
 env['ENV']['TERM'] = os.environ['TERM']
 # env.Append(CCFLAGS='-O3')
 env.Append(LIBS=['pthread'])
