@@ -10,8 +10,6 @@
 #include <netsi/client/client_network_manager.hpp>
 #include <netsi/util/cycle.hpp>
 
-using boost::asio::ip::udp;
-
 constexpr std::size_t BUFFER_SIZE = 256;
 
 class game {
