@@ -4,7 +4,7 @@
 #include <netsi/server.hpp>
 
 constexpr std::size_t BUFFER_SIZE = 2048;
-constexpr std::uint16_t PORT = 1035;
+constexpr std::uint16_t PORT = 1350;
 
 int main() {
 	netsi::server_network_manager snm(PORT, BUFFER_SIZE);
@@ -16,7 +16,7 @@ int main() {
 		// handle new connections
 		while (snm.has_new_client()) {
 			netsi::endpoint new_client_endpoint = snm.pop_new_client();
-			netsi::peer new_peer = snm.endpoint_to_peer(new_client_endpoint);
+			netsi::peer new_peer = snm.create_peer(new_client_endpoint);
 			peers.push_back(new_peer);
 		}
 
