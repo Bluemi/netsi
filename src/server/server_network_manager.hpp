@@ -5,18 +5,26 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#include "../util/endpoint.hpp"
+#include "../util/blocking_queue.hpp"
+#include "../common/endpoint.hpp"
 #include "../common/peer.hpp"
 #include "../common/socket.hpp"
+#include "../common/endpoint_hasher.hpp"
 
 namespace netsi {
+	struct client_request {
+		client_request(std::vector<char> m, endpoint re) : message(m), remote_endpoint(re) {}
+		std::vector<char> message;
+		endpoint remote_endpoint;
+	};
+
 	class server_network_manager {
 		public:
 			server_network_manager(const std::uint16_t port, const std::size_t buffer_size);
 			~server_network_manager();
 
-			bool has_new_client() const;
-			endpoint pop_new_client();
+			bool has_client_request() const;
+			client_request pop_client_request();
 
 			peer create_peer(const endpoint& remote_endpoint);
 		private:
@@ -24,9 +32,10 @@ namespace netsi {
 			void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred);
 
 			socket_ptr _socket;
-			std::vector<peer> _peers;
 			std::vector<char> _receive_buffer;
-			boost::asio::ip::udp::endpoint _remote_endpoint;
+			std::unordered_map<endpoint, peer, EndpointHasher> _peers;
+			endpoint _remote_endpoint;
+			blocking_queue<client_request> _client_requests;
 			std::size_t _buffer_size;
 	};
 }

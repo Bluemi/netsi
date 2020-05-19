@@ -1,15 +1,15 @@
 #ifndef __NETSI_CLIENT_NETWORK_MANAGER_CLASS__
 #define __NETSI_CLIENT_NETWORK_MANAGER_CLASS__
 
+#include <optional>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include "../common/endpoint.hpp"
 #include "../common/peer.hpp"
 #include "../common/socket.hpp"
-#include "../util/endpoint.hpp"
 
 namespace netsi {
-	using boost::asio::ip::udp;
 
 	class client_network_manager {
 		public:
@@ -22,8 +22,9 @@ namespace netsi {
 			void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred);
 
 			socket_ptr _socket;
+			std::optional<peer> _peer;
 			std::vector<char> _receive_buffer;
-			boost::asio::ip::udp::endpoint _remote_endpoint;
+			endpoint _remote_endpoint;
 			std::size_t _buffer_size;
 	};
 }

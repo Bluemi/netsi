@@ -1,7 +1,5 @@
 #include "server_network_manager.hpp"
 
-#include <iostream>
-
 namespace netsi {
 	server_network_manager::server_network_manager(const std::uint16_t port, const std::size_t buffer_size)
 		: _socket(std::make_shared<socket_impl>(port)), _buffer_size(buffer_size), _receive_buffer(buffer_size)
@@ -14,20 +12,21 @@ namespace netsi {
 		_socket->stop();
 	}
 
-	bool server_network_manager::has_new_client() const {
-		return false;
+	bool server_network_manager::has_client_request() const {
+		return !_client_requests.empty();
 	}
 
-	endpoint server_network_manager::pop_new_client() {
-		return endpoint();
+	client_request server_network_manager::pop_client_request() {
+		return _client_requests.pop();
 	}
 
 	peer server_network_manager::create_peer(const endpoint& remote_endpoint) {
-		return peer(_socket, remote_endpoint);
+		peer peer(_socket, remote_endpoint);
+		_peers.insert({remote_endpoint, peer});
+		return peer;
 	}
 
 	void server_network_manager::start_receive() {
-		std::cout << "starting receive" << std::endl;
 		_socket->socket.async_receive_from(
 			boost::asio::buffer(_receive_buffer),
 			_remote_endpoint,
@@ -41,11 +40,15 @@ namespace netsi {
 	}
 
 	void server_network_manager::handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
-		std::cout << "server got message" << std::endl;
-		std::cout << " message: " << std::string(_receive_buffer.cbegin(), _receive_buffer.cbegin() + bytes_transferred) << std::endl;
-		std::cout << " error code: " << error_code << std::endl;
-		std::cout << " endpoint: " << _remote_endpoint << std::endl;
-		std::cout << " bytes transferred: " << bytes_transferred << std::endl;
+		auto search_peer = _peers.find(_remote_endpoint);
+		if (search_peer == _peers.end()) {
+			_client_requests.push(client_request(
+				std::vector<char>(_receive_buffer.cbegin(), _receive_buffer.cbegin()+bytes_transferred),
+				_remote_endpoint
+			));
+		} else {
+			search_peer->second.push_message(std::vector<char>(_receive_buffer.cbegin(), _receive_buffer.cbegin()+bytes_transferred));
+		}
 
 		start_receive();
 	}

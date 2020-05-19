@@ -1,22 +1,22 @@
 #include "peer.hpp"
 
-#include <iostream>
-
 namespace netsi {
-	peer::peer(socket_ptr socket, boost::asio::ip::udp::endpoint remote_endpoint): _socket(socket), _remote_endpoint(remote_endpoint) {}
+	peer::peer(socket_ptr socket, endpoint remote_endpoint)
+		: _socket(socket), _remote_endpoint(remote_endpoint), _messages(std::make_shared<blocking_queue<std::vector<char>>>())
+	{}
 
 	bool peer::has_message() const {
-		return false;
+		return !_messages->empty();
 	}
 
 	std::vector<char> peer::pop_message() {
-		return {};
+		return _messages->pop();
+	}
+
+	void peer::push_message(const std::vector<char> message) {
+		_messages->push(message);
 	}
 
 	void peer::handle_send(const std::shared_ptr<std::vector<char>> message, const boost::system::error_code& error_code, std::size_t bytes_transferred) {
-		std::cout << "sent message" << std::endl;
-		std::cout << "  error_code: " << error_code << std::endl;
-		std::cout << "  bytes_transferred: " << bytes_transferred << std::endl;
-		std::cout << "  remote endpoint: " << _remote_endpoint << std::endl;
 	}
 }

@@ -1,6 +1,7 @@
 #ifndef __NETSI_SERVER_CLASS__
 #define __NETSI_SERVER_CLASS__
 
+#include <iostream>
 #include <netsi/server.hpp>
 
 constexpr std::size_t BUFFER_SIZE = 2048;
@@ -14,17 +15,20 @@ int main() {
 
 	while (running) {
 		// handle new connections
-		while (snm.has_new_client()) {
-			netsi::endpoint new_client_endpoint = snm.pop_new_client();
-			netsi::peer new_peer = snm.create_peer(new_client_endpoint);
+		while (snm.has_client_request()) {
+			std::cout << "adding new client" << std::endl;
+			netsi::client_request client_request = snm.pop_client_request();
+			netsi::peer new_peer = snm.create_peer(client_request.remote_endpoint);
 			peers.push_back(new_peer);
 		}
 
 		// handle new messages
 		for (netsi::peer& peer : peers) {
 			while (peer.has_message()) {
-				const std::vector<char>& buffer = peer.pop_message();
+				const std::vector<char> buffer = peer.pop_message();
 				std::string s(buffer.cbegin(), buffer.cend());
+				
+				std::cout << "replying to \"" << s << "\"" << std::endl;
 
 				if (s == "quit") {
 					running = false;
