@@ -11,6 +11,7 @@
 namespace netsi {
 	class Peer {
 		public:
+			Peer() = default;
 			Peer(SocketPtr socket, Endpoint remote_endpoint);
 
 			template<typename T>
