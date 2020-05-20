@@ -6,9 +6,9 @@
 constexpr std::size_t BUFFER_SIZE = 2048;
 
 int main() {
-	netsi::client_network_manager cnm(BUFFER_SIZE);
-	netsi::endpoint init_endpoint = cnm.resolve(std::string("localhost"), 1350);
-	netsi::peer peer = cnm.create_peer(init_endpoint);
+	netsi::ClientNetworkManager cnm(BUFFER_SIZE);
+	netsi::Endpoint init_endpoint = cnm.resolve(std::string("localhost"), 1350);
+	netsi::Peer peer = cnm.create_peer(init_endpoint);
 
 	bool running = true;
 

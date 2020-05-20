@@ -6,9 +6,9 @@
 #include <boost/thread.hpp>
 
 namespace netsi {
-	class socket_impl {
+	class Socket {
 		public:
-			socket_impl(std::uint16_t port);
+			Socket(std::uint16_t port);
 
 			void run();
 			void operator()();
@@ -20,7 +20,7 @@ namespace netsi {
 			std::optional<boost::thread> run_thread;
 	};
 
-	using socket_ptr = std::shared_ptr<socket_impl>;
+	using SocketPtr = std::shared_ptr<Socket>;
 }
 
 #endif

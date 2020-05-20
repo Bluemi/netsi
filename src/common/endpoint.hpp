@@ -4,7 +4,11 @@
 #include <boost/asio/ip/udp.hpp>
 
 namespace netsi {
-	using endpoint = boost::asio::ip::udp::endpoint;
+	using Endpoint = boost::asio::ip::udp::endpoint;
+
+	struct EndpointHasher {
+		std::size_t operator()(const Endpoint& endpoint) const;
+	};
 }
 
 #endif

@@ -1,5 +1,4 @@
-#include "endpoint_hasher.hpp"
-
+#include "endpoint.hpp"
 
 namespace netsi {
 	// MurmurHash taken from https://sites.google.com/site/murmurhash/
@@ -85,7 +84,7 @@ namespace netsi {
 		return h;
 	} 
 
-	std::size_t EndpointHasher::operator()(const endpoint& e) const {
+	std::size_t EndpointHasher::operator()(const Endpoint& e) const {
 		static_assert(sizeof(std::size_t) == 4 || sizeof(std::size_t) == 8);
 		if constexpr (sizeof(std::size_t) == 4) {
 			return MurmurHash32(e.data(), e.capacity(), 42);

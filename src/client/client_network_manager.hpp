@@ -11,20 +11,20 @@
 
 namespace netsi {
 
-	class client_network_manager {
+	class ClientNetworkManager {
 		public:
-			client_network_manager(std::size_t buffer_size);
-			~client_network_manager();
-			endpoint resolve(const std::string& remote_host, const std::uint16_t& port);
-			peer create_peer(const endpoint& init_endpoint);
+			ClientNetworkManager(std::size_t buffer_size);
+			~ClientNetworkManager();
+			Endpoint resolve(const std::string& remote_host, const std::uint16_t& port);
+			Peer create_peer(const Endpoint& init_endpoint);
 		private:
 			void start_receive();
 			void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred);
 
-			socket_ptr _socket;
-			std::optional<peer> _peer;
+			SocketPtr _socket;
+			std::optional<Peer> _peer;
 			std::vector<char> _receive_buffer;
-			endpoint _remote_endpoint;
+			Endpoint _remote_endpoint;
 			std::size_t _buffer_size;
 	};
 }

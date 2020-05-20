@@ -10,8 +10,7 @@ namespace netsi {
 	 * Taken from https://stackoverflow.com/questions/12805041/c-equivalent-to-javas-blockingqueue
 	 */
 	template <typename T>
-	class blocking_queue
-	{
+	class BlockingQueue {
 		public:
 			void push(T const& value) {
 				{

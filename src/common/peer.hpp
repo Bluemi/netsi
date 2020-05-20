@@ -6,13 +6,12 @@
 
 #include "endpoint.hpp"
 #include "socket.hpp"
-#include "message_types.hpp"
 #include "../util/blocking_queue.hpp"
 
 namespace netsi {
-	class peer {
+	class Peer {
 		public:
-			peer(socket_ptr socket, endpoint remote_endpoint);
+			Peer(SocketPtr socket, Endpoint remote_endpoint);
 
 			template<typename T>
 			void send(const T& msg) {
@@ -22,7 +21,7 @@ namespace netsi {
 					boost::asio::buffer(*buffer),
 					_remote_endpoint,
 					boost::bind(
-						&peer::handle_send,
+						&Peer::handle_send,
 						this,
 						buffer,
 						boost::asio::placeholders::error,
@@ -33,14 +32,14 @@ namespace netsi {
 
 			bool has_message() const;
 			std::vector<char> pop_message();
-			void push_message(const std::vector<char> message);
+			void push_message(const std::vector<char>& message);
 		private:
 			void handle_send(const std::shared_ptr<std::vector<char>> message, const boost::system::error_code& error_code, std::size_t bytes_transferred);
 
 			std::uint32_t _id;
-			socket_ptr _socket;
-			endpoint _remote_endpoint;
-			std::shared_ptr<blocking_queue<std::vector<char>>> _messages;
+			SocketPtr _socket;
+			Endpoint _remote_endpoint;
+			std::shared_ptr<BlockingQueue<std::vector<char>>> _messages;
 	};
 }
 

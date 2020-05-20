@@ -8,8 +8,8 @@ constexpr std::size_t BUFFER_SIZE = 2048;
 constexpr std::uint16_t PORT = 1350;
 
 int main() {
-	netsi::server_network_manager snm(PORT, BUFFER_SIZE);
-	std::vector<netsi::peer> peers;
+	netsi::ServerNetworkManager snm(PORT, BUFFER_SIZE);
+	std::vector<netsi::Peer> peers;
 
 	bool running = true;
 
@@ -17,13 +17,13 @@ int main() {
 		// handle new connections
 		while (snm.has_client_request()) {
 			std::cout << "adding new client" << std::endl;
-			netsi::client_request client_request = snm.pop_client_request();
-			netsi::peer new_peer = snm.create_peer(client_request.remote_endpoint);
+			netsi::ClientRequest client_request = snm.pop_client_request();
+			netsi::Peer new_peer = snm.create_peer(client_request.remote_endpoint);
 			peers.push_back(new_peer);
 		}
 
 		// handle new messages
-		for (netsi::peer& peer : peers) {
+		for (netsi::Peer& peer : peers) {
 			while (peer.has_message()) {
 				const std::vector<char> buffer = peer.pop_message();
 				std::string s(buffer.cbegin(), buffer.cend());
