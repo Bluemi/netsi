@@ -55,6 +55,10 @@ namespace netsi {
 		}
 	}
 
+	boost::asio::io_context& ServerNetworkManager::get_context() {
+		return _socket->io_context;
+	}
+
 	void ServerNetworkManager::start_receive() {
 		_socket->socket.async_receive_from(
 			boost::asio::buffer(_receive_buffer),

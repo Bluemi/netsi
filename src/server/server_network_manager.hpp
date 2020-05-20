@@ -26,6 +26,8 @@ namespace netsi {
 			ClientRequest pop_client_request();
 
 			Peer create_peer(const Endpoint& remote_endpoint);
+
+			boost::asio::io_context& get_context();
 		private:
 			void start_receive();
 			void handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred);
