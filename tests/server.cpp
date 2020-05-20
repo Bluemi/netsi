@@ -18,7 +18,7 @@ int main() {
 		while (snm.has_client_request()) {
 			std::cout << "adding new client" << std::endl;
 			netsi::ClientRequest client_request = snm.pop_client_request();
-			netsi::Peer new_peer = snm.create_peer(client_request.remote_endpoint);
+			netsi::Peer new_peer = snm.create_peer(client_request.endpoint);
 			peers.push_back(new_peer);
 		}
 

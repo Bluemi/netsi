@@ -12,9 +12,9 @@
 
 namespace netsi {
 	struct ClientRequest {
-		ClientRequest(std::vector<char> m, const Endpoint& re) : message(m), remote_endpoint(re) {}
+		ClientRequest(const std::vector<char>& m, const Endpoint& re) : message(m), endpoint(re) {}
 		std::vector<char> message;
-		Endpoint remote_endpoint;
+		Endpoint endpoint;
 	};
 
 	class ServerNetworkManager {
