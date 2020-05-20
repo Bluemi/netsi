@@ -33,6 +33,7 @@ namespace netsi {
 			SocketPtr _socket;
 			std::vector<char> _receive_buffer;
 			std::unordered_map<Endpoint, Peer, EndpointHasher> _peers;
+			std::unordered_map<Endpoint, BlockingQueue<std::vector<char>>, EndpointHasher> _pending_peers;
 			Endpoint _remote_endpoint;
 			BlockingQueue<ClientRequest> _client_requests;
 			std::size_t _buffer_size;
