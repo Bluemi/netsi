@@ -12,12 +12,17 @@ int main() {
 
 	bool running = true;
 
-	peer.send(std::string("hello"));
+	peer.send(std::string("login message"));
+
+	sleep(1);
 
 	while (running) {
 		while (peer.has_message()) {
 			const std::vector<char>& buffer = peer.pop_message();
 			std::cout << std::string(buffer.cbegin(), buffer.cend()) << std::endl;
 		}
+
+		peer.send("This is my message");
+		sleep(1);
 	}
 }

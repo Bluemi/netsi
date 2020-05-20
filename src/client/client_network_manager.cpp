@@ -4,7 +4,7 @@ namespace netsi {
 	using udp = boost::asio::ip::udp;
 
 	ClientNetworkManager::ClientNetworkManager(std::size_t buffer_size)
-		: _socket(std::make_shared<Socket>(5555)), _receive_buffer(buffer_size), _buffer_size(buffer_size)
+		: _socket(std::make_shared<Socket>()), _receive_buffer(buffer_size), _buffer_size(buffer_size)
 	{
 		start_receive();
 		_socket->run();

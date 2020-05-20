@@ -8,6 +8,7 @@
 namespace netsi {
 	class Socket {
 		public:
+			Socket();
 			Socket(std::uint16_t port);
 
 			void run();

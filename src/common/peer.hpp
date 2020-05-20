@@ -30,6 +30,10 @@ namespace netsi {
 				);
 			}
 
+			void send(const char* msg) {
+				send(std::string(msg));
+			}
+
 			bool has_message() const;
 			std::vector<char> pop_message();
 			void push_message(const std::vector<char>& message);

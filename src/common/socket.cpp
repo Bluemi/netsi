@@ -1,6 +1,7 @@
 #include "socket.hpp"
 
 namespace netsi {
+	Socket::Socket() : socket(io_context, boost::asio::ip::udp::v4()) {}
 	Socket::Socket(std::uint16_t port) : socket(io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port)) {}
 
 	void Socket::run() {
