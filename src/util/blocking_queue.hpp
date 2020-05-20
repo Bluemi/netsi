@@ -12,6 +12,12 @@ namespace netsi {
 	template <typename T>
 	class BlockingQueue {
 		public:
+			BlockingQueue() = default;
+			BlockingQueue(const BlockingQueue& blocking_queue) {
+				std::unique_lock<std::mutex> lock(d_mutex);
+				d_queue.assign(blocking_queue.d_queue.cbegin(), blocking_queue.d_queue.cend());
+			}
+
 			void push(T const& value) {
 				{
 					std::unique_lock<std::mutex> lock(this->d_mutex);

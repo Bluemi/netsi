@@ -83,6 +83,7 @@ namespace netsi {
 					std::move(buffer_copy),
 					_remote_endpoint
 				));
+				_pending_peers.insert(std::make_pair(_remote_endpoint, BlockingQueue<std::vector<char>>()));
 			}
 		}
 

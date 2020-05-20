@@ -14,8 +14,6 @@ int main() {
 
 	peer.send(std::string("login message"));
 
-	sleep(1);
-
 	while (running) {
 		while (peer.has_message()) {
 			const std::vector<char>& buffer = peer.pop_message();
