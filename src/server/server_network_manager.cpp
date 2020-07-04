@@ -15,11 +15,11 @@ namespace netsi {
 	}
 
 	bool ServerNetworkManager::has_client_request() const {
-		return !_client_requests.empty();
+		return !_client_requests->empty();
 	}
 
 	ClientRequest ServerNetworkManager::pop_client_request() {
-		return _client_requests.pop();
+		return _client_requests->pop();
 	}
 
 	struct _CreatePeerVisitor {
@@ -42,17 +42,16 @@ namespace netsi {
 		auto search_peer = _peers.find(remote_endpoint);
 		if (search_peer != _peers.end()) {
 			std::cerr << "ERROR: Trying to recreate peer for endpoint " << remote_endpoint << std::endl;
-		} else {
-			Peer peer(_socket, remote_endpoint);
-			auto pending_peer_search = _pending_peers.find(remote_endpoint);
-			if (pending_peer_search != _pending_peers.end()) {
-				while (!pending_peer_search->second.empty()) {
-					peer.push_message(std::move(pending_peer_search->second.pop()));
-				}
-			}
-			_peers.insert({remote_endpoint, peer});
-			return peer;
 		}
+		Peer peer(_socket, remote_endpoint);
+		auto pending_peer_search = _pending_peers.find(remote_endpoint);
+		if (pending_peer_search != _pending_peers.end()) {
+			while (!pending_peer_search->second.empty()) {
+				peer.push_message(std::move(pending_peer_search->second.pop()));
+			}
+		}
+		_peers.insert({remote_endpoint, peer});
+		return peer;
 	}
 
 	boost::asio::io_context& ServerNetworkManager::get_context() {
@@ -83,7 +82,7 @@ namespace netsi {
 			if (search_pending_peer != _pending_peers.end()) {
 				search_pending_peer->second.push(std::move(buffer_copy));
 			} else {
-				_client_requests.push(ClientRequest(
+				_client_requests->push(ClientRequest(
 					std::move(buffer_copy),
 					_remote_endpoint
 				));

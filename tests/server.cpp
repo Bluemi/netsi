@@ -5,7 +5,7 @@
 #include <netsi/server.hpp>
 
 constexpr std::size_t BUFFER_SIZE = 2048;
-constexpr std::uint16_t PORT = 1350;
+constexpr std::uint16_t PORT = 1351;
 
 int main() {
 	netsi::ServerNetworkManager snm(PORT, BUFFER_SIZE);

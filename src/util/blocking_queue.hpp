@@ -42,5 +42,8 @@ namespace netsi {
 			std::condition_variable d_condition;
 			std::deque<T>           d_queue;
 	};
+
+	template<typename T>
+	using BlockingQueuePtr = std::shared_ptr<BlockingQueue<T>>;
 }
 #endif
