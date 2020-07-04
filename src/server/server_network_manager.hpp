@@ -37,7 +37,7 @@ namespace netsi {
 			std::unordered_map<Endpoint, Peer, EndpointHasher> _peers;
 			std::unordered_map<Endpoint, BlockingQueue<std::vector<char>>, EndpointHasher> _pending_peers;
 			Endpoint _remote_endpoint;
-			BlockingQueuePtr<ClientRequest> _client_requests;
+			BlockingQueue<ClientRequest> _client_requests;
 			std::size_t _buffer_size;
 	};
 }

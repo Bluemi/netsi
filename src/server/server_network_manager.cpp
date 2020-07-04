@@ -15,11 +15,11 @@ namespace netsi {
 	}
 
 	bool ServerNetworkManager::has_client_request() const {
-		return !_client_requests->empty();
+		return !_client_requests.empty();
 	}
 
 	ClientRequest ServerNetworkManager::pop_client_request() {
-		return _client_requests->pop();
+		return _client_requests.pop();
 	}
 
 	struct _CreatePeerVisitor {
@@ -82,7 +82,7 @@ namespace netsi {
 			if (search_pending_peer != _pending_peers.end()) {
 				search_pending_peer->second.push(std::move(buffer_copy));
 			} else {
-				_client_requests->push(ClientRequest(
+				_client_requests.push(ClientRequest(
 					std::move(buffer_copy),
 					_remote_endpoint
 				));
