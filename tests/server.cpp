@@ -2,13 +2,19 @@
 #define __NETSI_SERVER_CLASS__
 
 #include <iostream>
+#include <optional>
+
 #include <netsi/server.hpp>
 
 constexpr std::size_t BUFFER_SIZE = 2048;
-constexpr std::uint16_t PORT = 1351;
+constexpr std::uint16_t PORT = 1350;
 
 int main() {
 	netsi::ServerNetworkManager snm(PORT, BUFFER_SIZE);
+
+	// std::optional<netsi::ServerNetworkManager> copy;
+	// copy = snm;
+
 	std::vector<netsi::Peer> peers;
 
 	bool running = true;

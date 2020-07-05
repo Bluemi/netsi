@@ -1,10 +1,8 @@
 #include "server_network_manager.hpp"
 
-#include <iostream>
-
 namespace netsi {
 	ServerNetworkManager::ServerNetworkManager(const std::uint16_t port, const std::size_t buffer_size)
-		: _socket(std::make_shared<Socket>(port)), _buffer_size(buffer_size), _receive_buffer(buffer_size)
+		: _socket(std::make_shared<Socket>(port)), _receive_buffer(buffer_size), _buffer_size(buffer_size), _client_requests(std::make_shared<BlockingQueue<ClientRequest>>())
 	{
 		start_receive();
 		_socket->run();
@@ -15,11 +13,11 @@ namespace netsi {
 	}
 
 	bool ServerNetworkManager::has_client_request() const {
-		return !_client_requests.empty();
+		return !_client_requests->empty();
 	}
 
 	ClientRequest ServerNetworkManager::pop_client_request() {
-		return _client_requests.pop();
+		return _client_requests->pop();
 	}
 
 	struct _CreatePeerVisitor {
@@ -41,7 +39,7 @@ namespace netsi {
 	Peer ServerNetworkManager::create_peer(const Endpoint& remote_endpoint) {
 		auto search_peer = _peers.find(remote_endpoint);
 		if (search_peer != _peers.end()) {
-			std::cerr << "ERROR: Trying to recreate peer for endpoint " << remote_endpoint << std::endl;
+			return search_peer->second;
 		}
 		Peer peer(_socket, remote_endpoint);
 		auto pending_peer_search = _pending_peers.find(remote_endpoint);
@@ -82,7 +80,7 @@ namespace netsi {
 			if (search_pending_peer != _pending_peers.end()) {
 				search_pending_peer->second.push(std::move(buffer_copy));
 			} else {
-				_client_requests.push(ClientRequest(
+				_client_requests->push(ClientRequest(
 					std::move(buffer_copy),
 					_remote_endpoint
 				));

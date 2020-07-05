@@ -20,7 +20,13 @@ namespace netsi {
 	class ServerNetworkManager {
 		public:
 			ServerNetworkManager(const std::uint16_t port, const std::size_t buffer_size);
+			ServerNetworkManager(const ServerNetworkManager& server_network_manager) = default;
+			ServerNetworkManager(ServerNetworkManager&&) = default;
+			ServerNetworkManager& operator=(const ServerNetworkManager&) = default;
+			ServerNetworkManager& operator=(ServerNetworkManager&&) = default;
 			~ServerNetworkManager();
+
+			// void init(const std::uint16_t port, const std::size_t buffer_size);
 
 			bool has_client_request() const;
 			ClientRequest pop_client_request();
@@ -37,7 +43,7 @@ namespace netsi {
 			std::unordered_map<Endpoint, Peer, EndpointHasher> _peers;
 			std::unordered_map<Endpoint, BlockingQueue<std::vector<char>>, EndpointHasher> _pending_peers;
 			Endpoint _remote_endpoint;
-			BlockingQueue<ClientRequest> _client_requests;
+			BlockingQueuePtr<ClientRequest> _client_requests;
 			std::size_t _buffer_size;
 	};
 }
